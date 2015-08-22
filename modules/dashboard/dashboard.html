@@ -1,0 +1,206 @@
+<div class="row">
+    <div class="col m1 s12">
+        <div class="section">
+            <div><a href="#" ui-sref="{{vm.STATES.DASHBOARD}}">Dashboard</a></div>
+            <div><a href="#" ui-sref="{{vm.STATES.STATS}}">Stats</a></div>
+        </div>
+    </div>
+    <div class="col m11 s12">
+        
+
+        <div class="section">
+
+            <!--   Main Section   -->
+            <div class="row">
+                <div class="col s12 m5">
+                    <div ng-controller="OrderController">
+
+                        <pre><code>order::{{entireOrderService.sharedService.order}}</code></pre>
+                        <pre><code>tempEditOrder::{{entireOrderService.sharedService.tempEditOrder}}</code></pre>
+
+
+
+                        <form name="orderForm" ng-submit="addOrderInfo(order)">
+                            <div class="card darken-1 main_left">
+                                <div class="card-content black-text">
+                                    <span class="card-title materialize-red-text text-lighten-2" ng-hide="entireOrderService.sharedService.editing">Add Order</span>
+                                    <span class="card-title materialize-red-text text-lighten-2" ng-show="entireOrderService.sharedService.editing">
+                                        <span>Edit Order</span>
+                                        <span class="btn btn-floating right waves-effect waves-light" ng-click="cancelEdit()">X</span>
+                                    </span>
+                                    <div class="divider"></div>
+                                    <div class="formBox">
+                                        <div class="row">
+                                            <div class="input-field col s12 m6">
+                                                <input tabindex="1" type="number" required ng-model="entireOrderService.sharedService.order.tableNo" id="table_no" class="validate">
+                                                <label for="table_no">Table No</label>
+                                            </div>
+                                            <div class="input-field col s12 m6">
+                                                <input tabindex="2" ng-model="entireOrderService.sharedService.order.priority" ng-init="entireOrderService.sharedService.order.priority=false" id="priority" type="checkbox" class="validate">
+                                                <label for="priority">Priority</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-field col s12 m12">
+                                                <input tabindex="3" required ng-model="entireOrderService.sharedService.order.name" id="order_name" type="text" class="validate">
+                                                <label for="order_name">Name</label>
+                                            </div>
+
+                                        </div>
+                                        <div class="row ">
+                                            <div class="input-field col s12 m9">
+                                                <input tabindex="4" auto-complete-order-list ui-items="orderRecepieList" ng-model="entireOrderService.sharedService.order.orderRecepieItem" id="foodOrderType" type="text" class="validate">
+                                                <label for="foodOrderType">Item</label>
+                                            </div>
+                                            <div class="input-field col s12 m3">
+                                                <input tabindex="5" ng-model="entireOrderService.sharedService.order.quantity" id="quantity" type="number" class="validate">
+                                                <label for="quantity">Quantity</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="row ">
+
+                                            <div class="col s12 m12">
+                                                <div class="input-field">
+                                                    <span class="btn right waves-effect waves-light" ng-click="addFoodRecepie(entireOrderService.sharedService.order)">Add Item</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="card-action" ng-show="entireOrderService.sharedService.order.tableNo || entireOrderService.sharedService.order.name">
+                                    <div>
+                                        <div class="card-title materialize-red-text text-lighten-2">Preview Order</div>
+                                        <div class="divider"></div>
+                                        <div class="black-text preview_order input-field">
+                                            <div>
+                                                <span ng-show="entireOrderService.sharedService.order.tableNo"> <b>Table No:</b> </span>{{ entireOrderService.sharedService.order.tableNo}}
+                                                <span ng-show="entireOrderService.sharedService.order.tableNo"> - </span>
+                                                <span ng-show="entireOrderService.sharedService.order.priority" class="badge red lighten-2 white-text">Priority</span>
+                                            </div>
+                                            <div><span ng-show="entireOrderService.sharedService.order.name"> <b>Name:</b> </span>{{ entireOrderService.sharedService.order.name}} </div>
+                                            <table class="responsive-table bordered" ng-show="entireOrderService.sharedService.order.orderRecepieItems.length">
+                                                <thead>
+                                                <th>Items</th>
+                                                <th class="small-width">Quantity</th>
+                                                <th class="small-width"></th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="recepieItem in entireOrderService.sharedService.order.orderRecepieItems">
+                                                        <td>{{recepieItem.orderRecepieItem}}</td>
+                                                        <td>{{recepieItem.quantity}}</td>
+                                                        <td><button class="btn-floating waves-effect waves-light" ng-click="removeFoodRecepie(recepieItem)">X</button></td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class=" col s12 m12">
+                                                <div class="input-field">
+                                                    <div>
+                                                        <input type="submit" ng-disabled="orderForm.$invalid" class="btn right" ng-hide="entireOrderService.sharedService.editing" value="Add Order">
+                                                    </div>
+                                                    <div>
+                                                        <input type="button" ng-click="updateOrderInfo(entireOrderService.sharedService.order)" ng-disabled="orderForm.$invalid" class="btn right" ng-show="entireOrderService.sharedService.editing" value="Update Order">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col s12 m7">
+                    <div class="card darken-1 main_right">
+                        <div class="card-content black-text" ng-controller="OrderDetails as ODCtrl">
+
+                            <div class="row">
+                                <div class="col s12 m3 order_list">
+                                    <span class="card-title materialize-red-text text-lighten-2">Order List</span>
+                                    <div class="divider"></div>
+
+                                    <div>
+                                        <input type="search" ng-model="query" placeholder="Search" />
+                                    </div>
+                                    <ul class="orderlists">
+                                        <li class="animate-repeat" ng-class="{ 'order-done': orderItem.orderDone }" ng-repeat="orderItem in orderItems | filter:query" ng-animate=" 'animate' ">
+                                            <div class="loadDefault" ng-click="viewDetails(orderItem);">
+
+                                                <span>{{orderItem.tableNo}}</span>
+                                                <span ng-show="orderItem.tableNo"> - </span>
+                                                <span>{{orderItem.name}}</span>
+                                                <i ng-show="orderItem.priority" class="material-icons right" ng-class=" orderItem.orderDone? 'prio-order-done' : 'red-text' ">info</i>
+
+                                            </div>
+
+                                        </li>
+
+                                    </ul>
+
+
+                                </div>
+                                <div class="col s12 m9  order_details">
+                                    <span class="card-title materialize-red-text text-lighten-2">Order details</span>
+                                    <div class="divider"></div>
+
+                                    <pre><code>{{orderItemsDetails}}</code></pre>
+                                    <div>
+                                        <div ng-repeat="orderItem in orderItemsDetails | limitTo:1">
+                                            <div ng-class="{ 'order-done': orderItem.orderDone }">
+                                                <div>
+
+                                                    <span class="card-title black-text">
+                                                        {{orderItem.tableNo}} - {{orderItem.name}}
+                                                        <i ng-show="orderItem.priority" class="material-icons " ng-class=" orderItem.orderDone? 'prio-order-done' : 'red-text' ">info</i>
+
+                                                    </span>
+
+                                                    <span class="right" ng-click="deletedetails(orderitem);" title="Delete"><i class="material-icons">delete</i></span>
+                                                    <span class="right" ng-click="editDetails(orderItem);" title="Edit"><i class="material-icons">list</i></span>
+                                                    <span ng-hide="orderItem.orderDone" class="right" ng-click="donedetails(orderItem);" title="Done"><i class="material-icons">done_all</i></span>
+                                                </div>
+                                                <table ng-show="orderItem.orderRecepieItems.length" class="responsive-table striped">
+                                                    <thead>
+                                                    <th>Items</th>
+                                                    <th class="small-width">Quantity</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="recepieItem in orderItem.orderRecepieItems">
+                                                            <td>{{recepieItem.orderRecepieItem}}</td>
+                                                            <td>{{recepieItem.quantity}}</td>
+                                                        </tr>
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                </div><!-- order details ends-->
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        </div>
+        <!--<span ng-click="vm.goToError()">Go</span> to <a href="#" ui-sref="{{vm.STATES.ERROR}}">Error</a>-->
+        <user-name>
+
+        </user-name>
+    </div>
+</div>
