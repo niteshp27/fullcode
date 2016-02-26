@@ -12,9 +12,17 @@
         $stateProvider
             .state(STATES.DASHBOARD, {
                 url: "/dashboard",
-                templateUrl: "modules/dashboard/dashboard.html",
+                //templateUrl: "modules/dashboard/dashboard.html",
                 controller: "DashboardController",
-                controllerAs: "vm"
+                controllerAs: "vm",
+                views: {
+                    '': { templateUrl: "modules/dashboard/dashboard.html" },
+                    'toptabs@dashboard': { 
+                                            templateUrl: "modules/Navbar/topnavbar/topTabs.html",
+                                            controller: "topNavbarController",
+                                            controllerAs: "vm"
+                                         }
+                }
             })
             .state(STATES.STATS, {
                 url: "/stats",
@@ -949,6 +957,31 @@ Materialize.elementOrParentIsFixed = function (element) {
 
 
 
+//topNavbarApp
+(function () {
+    "use strict";
+
+    var app = angular.module("ProjectModule");    
+
+    app.controller("topNavbarController", ["STATES", function (STATES) {
+        var vm = this;
+        vm.STATES = STATES;
+    }]);
+    
+})();
+(function () {
+    "use strict";
+
+    var app = angular.module("ProjectModule");
+
+    app.controller("ErrorController", ["STATES", function (STATES) {
+        var vm = this;
+
+        vm.STATES = STATES;
+    }]);
+
+}());
+
 //dashboardapp
 (function () {
     "use strict";
@@ -960,10 +993,6 @@ Materialize.elementOrParentIsFixed = function (element) {
         vm.STATES = STATES;
     }]);
 
-
-
-
-
     app.service("entireOrderService", function () {
         var self = this;
 
@@ -972,6 +1001,8 @@ Materialize.elementOrParentIsFixed = function (element) {
         self.sharedService.order = {};
         self.sharedService.editing = 0;
         self.sharedService.tempEditOrder = [];
+        self.sharedService.orderItems = [];
+        /*
         self.sharedService.orderItems = [
             {
                 name: 'Nitesh',
@@ -1005,7 +1036,13 @@ Materialize.elementOrParentIsFixed = function (element) {
                     }
                 ]
             }
-        ];
+        ];*/
+
+        if (JSON.parse(localStorage.getItem('orderItems')) != null) {
+            
+            self.sharedService.orderItems = JSON.parse(localStorage.getItem('orderItems'));
+        }
+
         self.sharedService.edit = function (order) {
 
             self.sharedService.editing = 1;
@@ -1049,19 +1086,26 @@ Materialize.elementOrParentIsFixed = function (element) {
         $scope.order = {};
         $scope.order = entireOrderService.sharedService.order;
         $scope.order.orderRecepieItems = [];
+
+
         $scope.order.orderRecepieItems = entireOrderService.sharedService.order.orderRecepieItems;
+
         $scope.addOrderInfo = function () {
             if (!entireOrderService.sharedService.order.orderRecepieItems.length) {
                 console.table("addFoodRecepieOn Order check");
                 if (checkUndefinedBlankRecepie(entireOrderService.sharedService.order)) return;
             }
-            console.table("addOrderInfo" + entireOrderService.sharedService.order);
-
+            console.table("addOrderInfo" + JSON.stringify(entireOrderService.sharedService.order));
+            
             $scope.entireOrderService.sharedService.orderItems.push(entireOrderService.sharedService.order);
             entireOrderService.sharedService.order = {};
             entireOrderService.sharedService.order.orderRecepieItems = [];
-            console.table("addOrderInfo" + $scope.entireOrderService.sharedService.orderItems);
+            console.table("addOrderInfo" + JSON.stringify($scope.entireOrderService.sharedService.orderItems));
             jQuery("input#table_no").focus();
+
+            //use local storage and angular.toJson
+            localStorage.setItem('orderItems', angular.toJson($scope.entireOrderService.sharedService.orderItems));
+
         };
         $scope.updateOrderInfo = function (order) {
             //call to update value on server
@@ -1092,7 +1136,7 @@ Materialize.elementOrParentIsFixed = function (element) {
             console.table(entireOrderService.sharedService.order.quantity);
             entireOrderService.sharedService.order.orderRecepieItem = "";
             entireOrderService.sharedService.order.quantity = "";
-
+            //entireOrderService.sharedService.order.orderDone = "";
 
             jQuery("input#foodOrderType").focus();
 
@@ -1152,7 +1196,7 @@ Materialize.elementOrParentIsFixed = function (element) {
         $scope.order = entireOrderService.sharedService.order;
         $scope.orderItems = entireOrderService.sharedService.orderItems;
         $scope.orderItemsDetails = [];
-        $scope.orderItemsDetails.push($scope.orderItems[0]);
+        $scope.orderItemsDetails.push($scope.orderItems[0]);       
         $scope.viewDetails = function (order) {
             $scope.orderItemsDetails = [];
             $scope.orderItemsDetails.push(order);
@@ -1248,19 +1292,6 @@ Materialize.elementOrParentIsFixed = function (element) {
         }
     });
 
-
-}());
-
-(function () {
-    "use strict";
-
-    var app = angular.module("ProjectModule");
-
-    app.controller("ErrorController", ["STATES", function (STATES) {
-        var vm = this;
-
-        vm.STATES = STATES;
-    }]);
 
 }());
 

@@ -1,25 +1,14 @@
 <div class="row">
-    <div class="col m1 s12">
-        <div class="section">
-            <div><a href="#" ui-sref="{{vm.STATES.DASHBOARD}}">Dashboard</a></div>
-            <div><a href="#" ui-sref="{{vm.STATES.STATS}}">Stats</a></div>
-        </div>
-    </div>
-    <div class="col m11 s12">
-        
 
+    <div class="col m112 s12">
         <div class="section">
 
             <!--   Main Section   -->
             <div class="row">
                 <div class="col s12 m5">
                     <div ng-controller="OrderController">
-
-                        <pre><code>order::{{entireOrderService.sharedService.order}}</code></pre>
-                        <pre><code>tempEditOrder::{{entireOrderService.sharedService.tempEditOrder}}</code></pre>
-
-
-
+                            <pre class="hide"><code>order::{{entireOrderService.sharedService.order}}</code></pre>
+                            <pre class="hide"><code>tempEditOrder::{{entireOrderService.sharedService.tempEditOrder}}</code></pre>
                         <form name="orderForm" ng-submit="addOrderInfo(order)">
                             <div class="card darken-1 main_left">
                                 <div class="card-content black-text">
@@ -55,6 +44,10 @@
                                             <div class="input-field col s12 m3">
                                                 <input tabindex="5" ng-model="entireOrderService.sharedService.order.quantity" id="quantity" type="number" class="validate">
                                                 <label for="quantity">Quantity</label>
+                                            </div>
+                                            <div class="input-field col s12 m3" style="display:none;">
+                                                <input ng-model="entireOrderService.sharedService.order.orderDone" ng-init="entireOrderService.sharedService.order.orderDone=false" id="orderDone" type="checkbox">
+
                                             </div>
                                         </div>
 
@@ -150,7 +143,7 @@
                                     <span class="card-title materialize-red-text text-lighten-2">Order details</span>
                                     <div class="divider"></div>
 
-                                    <pre><code>{{orderItemsDetails}}</code></pre>
+                                    <pre class="hide"><code>{{orderItemsDetails}}</code></pre>
                                     <div>
                                         <div ng-repeat="orderItem in orderItemsDetails | limitTo:1">
                                             <div ng-class="{ 'order-done': orderItem.orderDone }">
